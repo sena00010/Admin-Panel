@@ -2,7 +2,16 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import { initializeApp } from "firebase/app";
-import { collection, getDocs, getFirestore, doc, getDoc, addDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  doc,
+  getDoc,
+  addDoc,
+  deleteDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { useEffect, useState } from "react";
 import PostReq from "@/components/postR";
 
@@ -55,7 +64,7 @@ export default function Home() {
     const projectSnap = await getDoc(projectRef);
     if (projectSnap.exists()) {
       setSelectedProject({ uid: projectId, ...projectSnap.data() } as Project);
-      console.log(selectedProject,'selectedProject')
+      console.log(selectedProject, "selectedProject");
       setOpenUpdate(true);
     } else {
       console.log("Belge bulunamadı");
@@ -66,10 +75,10 @@ export default function Home() {
     if (selectedProject) {
       const projectRef = doc(db, "projects", selectedProject.uid);
       await updateDoc(projectRef, {
-        name: selectedProject.name,
-        description: selectedProject.description,
-        image: selectedProject.image,
-        link: selectedProject.link,
+        name: selectedProject.name || "",
+        description: selectedProject.description || "",
+        image: selectedProject.image || "",
+        link: selectedProject.link || "",
       });
       setOpenUpdate(false);
       const updatedProjects = await fetchProjects();
@@ -77,28 +86,62 @@ export default function Home() {
     }
   };
 
+  const handleDeleteClick = async (projectId: string) => {
+    const projectRef = doc(db, "projects", projectId);
+    console.log(projectRef,"projectRef")
+    try {
+      await deleteDoc(projectRef);
+      const updatedProjects = await fetchProjects();
+      setProjects(updatedProjects);
+      console.log(`Proje ${projectId} başarıyla silindi`);
+    } catch (e) {
+      console.error("Proje silinirken hata oluştu: ", e);
+    }
+  };
+  
+
   return (
     <main className={styles.main}>
       {openUpdate && selectedProject ? (
         <div>
           <input
             value={selectedProject.name}
-            onChange={(e) => setSelectedProject({ ...selectedProject, name: e.currentTarget.value })}
+            onChange={(e) =>
+              setSelectedProject({
+                ...selectedProject,
+                name: e.currentTarget.value,
+              })
+            }
             placeholder="Proje ismi giriniz"
           />
           <input
             value={selectedProject.description}
-            onChange={(e) => setSelectedProject({ ...selectedProject, description: e.currentTarget.value })}
+            onChange={(e) =>
+              setSelectedProject({
+                ...selectedProject,
+                description: e.currentTarget.value,
+              })
+            }
             placeholder="Proje bilgilerini giriniz"
           />
           <input
             value={selectedProject.image}
-            onChange={(e) => setSelectedProject({ ...selectedProject, image: e.currentTarget.value })}
+            onChange={(e) =>
+              setSelectedProject({
+                ...selectedProject,
+                image: e.currentTarget.value,
+              })
+            }
             placeholder="Fotoğraf giriniz"
           />
           <input
             value={selectedProject.link}
-            onChange={(e) => setSelectedProject({ ...selectedProject, link: e.currentTarget.value })}
+            onChange={(e) =>
+              setSelectedProject({
+                ...selectedProject,
+                link: e.currentTarget.value,
+              })
+            }
             placeholder="Bağlantı giriniz"
           />
           <button onClick={handleUpdate}>Güncellemeyi Kaydet</button>
@@ -129,7 +172,12 @@ export default function Home() {
                 GitHub Link
               </a>
             </div>
-            <button onClick={() => handleEditClick(project.uid)}>Düzenle!</button>
+            <button onClick={() => handleEditClick(project.uid)}>
+              Düzenle!
+            </button>
+            <button onClick={() => handleDeleteClick(project.uid)}>
+              Sil!
+            </button>
           </div>
         ))}
       </div>
