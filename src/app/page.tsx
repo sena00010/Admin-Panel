@@ -88,7 +88,6 @@ export default function Home() {
 
   const handleDeleteClick = async (projectId: string) => {
     const projectRef = doc(db, "projects", projectId);
-    console.log(projectRef,"projectRef")
     try {
       await deleteDoc(projectRef);
       const updatedProjects = await fetchProjects();
@@ -98,13 +97,13 @@ export default function Home() {
       console.error("Proje silinirken hata oluştu: ", e);
     }
   };
-  
 
   return (
     <main className={styles.main}>
       {openUpdate && selectedProject ? (
         <div>
           <input
+            className={styles.input}
             value={selectedProject.name}
             onChange={(e) =>
               setSelectedProject({
@@ -115,6 +114,7 @@ export default function Home() {
             placeholder="Proje ismi giriniz"
           />
           <input
+            className={styles.textarea}
             value={selectedProject.description}
             onChange={(e) =>
               setSelectedProject({
@@ -125,6 +125,7 @@ export default function Home() {
             placeholder="Proje bilgilerini giriniz"
           />
           <input
+            className={styles.fileInput}
             value={selectedProject.image}
             onChange={(e) =>
               setSelectedProject({
@@ -135,6 +136,7 @@ export default function Home() {
             placeholder="Fotoğraf giriniz"
           />
           <input
+            className={styles.input}
             value={selectedProject.link}
             onChange={(e) =>
               setSelectedProject({
@@ -172,12 +174,10 @@ export default function Home() {
                 GitHub Link
               </a>
             </div>
-            <button onClick={() => handleEditClick(project.uid)}>
+            <button  className={styles.button} onClick={() => handleEditClick(project.uid)}>
               Düzenle!
             </button>
-            <button onClick={() => handleDeleteClick(project.uid)}>
-              Sil!
-            </button>
+            <button  className={styles.button} onClick={() => handleDeleteClick(project.uid)}>Sil!</button>
           </div>
         ))}
       </div>

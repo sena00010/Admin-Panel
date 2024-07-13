@@ -1,7 +1,8 @@
 "use client";
 import { initializeApp } from "firebase/app";
 import { addDoc, collection, getFirestore } from "firebase/firestore";
-import React, { ReactEventHandler, useState } from "react";
+import React, { useState } from "react";
+import styles from "./postR.module.css"; // CSS dosyanızı import edin
 
 const firebaseConfig = {
   apiKey: "AIzaSyCwU76Wlwc-55i5XGm9cA6b1DwPgljkjOQ",
@@ -22,6 +23,7 @@ const PostReq = () => {
   const [newImage, setNewImage] = useState("");
   const [newLink, setNewLink] = useState("");
   const [imagePreview, setImagePreview] = useState<string | File | ArrayBuffer | null>("");
+
   const addNewProject = async () => {
     const data = {
       name: newName,
@@ -51,35 +53,37 @@ const PostReq = () => {
   };
 
   return (
-    <div>
-      <div>
-        <form>
-          <input
-            value={newName}
-            onChange={(e) => setNewName(e.currentTarget.value)}
-            placeholder="Proje ismi giriniz"
-          />
-          <input
-            value={newDescription}
-            onChange={(e) => setNewDescription(e.currentTarget.value)}
-            placeholder="Proje bilgilerini giriniz"
-          />
-          <input
-            type="file"
-            id="myFile"
-            name="filename"
-            onChange={handleImageChange}
-            placeholder="Fotoğraf giriniz"
-          />
-          <input
-            value={newLink}
-            onChange={(e) => setNewLink(e.currentTarget.value)}
-            placeholder="Bağlantı giriniz"
-          />
-        </form>
-        {imagePreview && <img src={imagePreview} alt="Preview" style={{ width: '200px', height: '200px' }} />}
-      </div>
-      <button onClick={addNewProject}>Ekle!</button>
+    <div className={styles.container}>
+      <form className={styles.form}>
+        <input
+          className={styles.input}
+          value={newName}
+          onChange={(e) => setNewName(e.currentTarget.value)}
+          placeholder="Proje ismi giriniz"
+        />
+        <textarea
+          className={styles.textarea}
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.currentTarget.value)}
+          placeholder="Proje bilgilerini giriniz"
+        />
+        <input
+          type="file"
+          className={styles.fileInput}
+          id="myFile"
+          name="filename"
+          onChange={handleImageChange}
+          placeholder="Fotoğraf giriniz"
+        />
+        <input
+          className={styles.input}
+          value={newLink}
+          onChange={(e) => setNewLink(e.currentTarget.value)}
+          placeholder="Bağlantı giriniz"
+        />
+      </form>
+      {imagePreview && <img className={styles.imgPreview} src={imagePreview as string} alt="Preview" />}
+      <button className={styles.button} onClick={addNewProject}>Ekle!</button>
     </div>
   );
 };
